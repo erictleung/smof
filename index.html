@@ -44,7 +44,8 @@
 <h1>
 <a id="installation" class="anchor" href="#installation" aria-hidden="true"><span class="octicon octicon-link"></span></a>Installation</h1>
 
-<p><code>smof</code> has been tested in a Linux and Mac OS environment. To install run the following in a terminal window</p>
+<p><code>smof</code> has been tested in a Linux and Mac OS environment. To install run the
+following in a terminal window</p>
 
 <div class="highlight highlight-source-shell"><pre>git clone https://github.com/zbwrnz/smof
 <span class="pl-c1">cd</span> smof
@@ -52,8 +53,8 @@
 ./IO-test.sh
 sudo ln -s <span class="pl-smi">$PWD</span>/smof.py /usr/local/bin/smof</pre></div>
 
-<p>You may, of course, link the smof executable to whatever location you want so
-long as the destination directory is in PATH.</p>
+<p>You may link the smof executable to whatever location you want so long as the
+destination directory is in PATH.</p>
 
 <p>If you do not have git installed on your machine, you may download the ZIP file
 and run</p>
@@ -79,66 +80,14 @@ sudo ln -s <span class="pl-smi">$PWD</span>/smof.py /usr/local/bin/smof</pre></d
 <div class="highlight highlight-source-shell"><pre>smof grep -h</pre></div>
 
 <h1>
+<a id="sample-data" class="anchor" href="#sample-data" aria-hidden="true"><span class="octicon octicon-link"></span></a>Sample data</h1>
+
+<p>All the examples below use files in the <code>sample-data/anncaliia_algerae</code> folder.</p>
+
+<h1>
 <a id="unix-like-commands" class="anchor" href="#unix-like-commands" aria-hidden="true"><span class="octicon octicon-link"></span></a>UNIX-like commands</h1>
 
 <p>This group of subcommands include commands based off UNIX builtins.</p>
-
-<h2>
-<a id="smof-grep" class="anchor" href="#smof-grep" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>smof grep</code>
-</h2>
-
-<p>Whereas GNU grep searches lines for matches, <code>smof grep</code> searches either the
-FASTA headers OR the fasta sequence.</p>
-
-<p>Extract the entry with the id AT5G49640</p>
-
-<div class="highlight highlight-source-shell"><pre>smof grep AT1G10960 at.faa</pre></div>
-
-<p>Extract entries containing the sequence 'FFQQ'</p>
-
-<div class="highlight highlight-source-shell"><pre>smof grep -q FFQQ at.faa</pre></div>
-
-<p>Extract only the FFQQ motif and the 3 amino acids flanking it.</p>
-
-<div class="highlight highlight-source-shell"><pre>smof grep -qoC3 FFQQ at.faa</pre></div>
-
-<p>Write the output in gff format</p>
-
-<div class="highlight highlight-source-shell"><pre>smof grep -qoC3 --gff FFQQ at.faa</pre></div>
-
-<p>Count occurrences (on both strands) of a DNA pattern using IUPAC extended
-nucleotide alphabet.</p>
-
-<div class="highlight highlight-source-shell"><pre>smof grep -qmbG YYNCTATAWAWASM myfile.fna
-   1388</pre></div>
-
-<p>Find non-overlapping open reading frames of length greater than 100 codons.
-This is meant as an example of regex searching. This will NOT give you a great
-answer. smof does not consider frames (nor will it ever). It will not find the
-set of longest possible ORFs. If you want to identify ORFs, you should use a
-specialized program. That said:</p>
-
-<div class="highlight highlight-source-shell"><pre>smof grep -qPb --gff <span class="pl-s"><span class="pl-pds">'</span>ATG(.{3}){99,}?(TAA|TGA|TAG)<span class="pl-pds">'</span></span> myfile.fna
-  chr3    smof-2.0.1   regex_match   357   668   <span class="pl-c1">.</span>  +  <span class="pl-c1">.</span>  <span class="pl-c1">.</span>
-  chr3    smof-2.0.1   regex_match   823   1152  <span class="pl-c1">.</span>  +  <span class="pl-c1">.</span>  <span class="pl-c1">.</span>
-  chr3    smof-2.0.1   regex_match   1230  1568  <span class="pl-c1">.</span>  +  <span class="pl-c1">.</span>  <span class="pl-c1">.</span></pre></div>
-
-<p>A particularly powerful function of <code>smof grep</code> is the ability to read a whole
-file of patterns and match them against a regex capture. This allows O(n),
-rather than O(mn) as in GNU grep, extraction of entries containing a particular
-pattern. For example if your headers are formatted like
-'locus|xxx|taxon|yyy|gi|zzz' and you have a file of thousands of gi numbers,
-you can quickly extract all the sequences in the FASTA file matching one of
-these gi numbers with the following command:</p>
-
-<div class="highlight highlight-source-shell"><pre>smof grep -w <span class="pl-s"><span class="pl-pds">'</span>gi\|(\d+)<span class="pl-pds">'</span></span> -f gi_numbers.txt seq.fa</pre></div>
-
-<h2>
-<a id="smof-md5sum" class="anchor" href="#smof-md5sum" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>smof md5sum</code>
-</h2>
-
-<p>This tool is useful if you want a checksum for a FASTA file that is independent
-of format (e.g. column width or case).</p>
 
 <h2>
 <a id="smof-head-and-tail" class="anchor" href="#smof-head-and-tail" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>smof head</code> and <code>tail</code>
@@ -147,6 +96,24 @@ of format (e.g. column width or case).</p>
 <p>These functions mimic their GNU counterparts but on the entry, rather than
 line, level. For example <code>smof head</code> prints the first entry in a file and <code>smof
 -5</code> prints the first 5. Similarly for <code>smof tail</code>. </p>
+
+<div class="highlight highlight-source-shell"><pre>smof head aa.faa
+smof head -3 aa.faa
+smof tail aa.faa
+smof tail -3 aa.faa
+smof tail +2 aa.faa <span class="pl-k">|</span> smof head</pre></div>
+
+<p>In addition to the GNU-like functionallity, <code>smof head</code> and <code>tail</code> can also
+limit the sequence that is output. This can be useful for diagnostic purposes.</p>
+
+<div class="highlight highlight-source-shell"><pre><span class="pl-c"># print just the terminal codon from the first 5 transcripts</span>
+smof head -l 3 -5 aa.transcripts.fna
+<span class="pl-c"># print the first codon</span>
+smof head -f 3 -5 aa.transcripts.fna
+<span class="pl-c"># print first and last</span>
+smof head -f 3 -l 3 -5 aa.transcripts.fna</pre></div>
+
+<p>This sort of diagnostics is easier done with <code>smof sniff</code>.</p>
 
 <h2>
 <a id="smof-sort" class="anchor" href="#smof-sort" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>smof sort</code>
@@ -158,6 +125,13 @@ sort is the ability to sort by regex capture. For example, if the FASTA headers
 are formated like 'locus|xxx|taxon|yyy|gi|zzz', you can sort them numerically
 by taxon with the command <code>smof sort -nx 'taxon\|(\d+)'</code>.</p>
 
+<div class="highlight highlight-source-shell"><pre><span class="pl-c"># print the shortest sequence</span>
+smof sort -l aa.faa <span class="pl-k">|</span> smof head
+<span class="pl-c"># print the longest sequence</span>
+smof sort -l aa.faa <span class="pl-k">|</span> smof tail
+<span class="pl-c"># sort by the function in the header description</span>
+smof sort -x <span class="pl-s"><span class="pl-pds">'</span>PRA339 (.*)<span class="pl-pds">'</span></span> aa.faa <span class="pl-k">|</span> smof tail</pre></div>
+
 <h2>
 <a id="smof-sample" class="anchor" href="#smof-sample" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>smof sample</code>
 </h2>
@@ -165,23 +139,143 @@ by taxon with the command <code>smof sort -nx 'taxon\|(\d+)'</code>.</p>
 <p><code>smof sample</code> allows extraction of a random sample of entries. With no
 arguments, it reads the entire file into memory and outputs a random one.</p>
 
+<div class="highlight highlight-source-shell"><pre><span class="pl-c"># retrieve 1 sequence by default</span>
+smof sample aa.faa
+smof sample -n 5 aa.faa
+<span class="pl-c"># set a random seed (useful for debugging and reproducible scripts)</span>
+smof sample --seed 42 aa.faa</pre></div>
+
 <h2>
 <a id="smof-split" class="anchor" href="#smof-split" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>smof split</code>
 </h2>
 
 <p>This command allows easily splitting of a large file into many smaller files.</p>
 
+<p>You can split a large file several small files with equal numbers of sequences</p>
+
+<div class="highlight highlight-source-shell"><pre>smof split -n 5 -p zzz aa.faa
+grep -c <span class="pl-s"><span class="pl-pds">'</span>&gt;<span class="pl-pds">'</span></span> aa.faa zzz<span class="pl-k">*</span>
+rm zzz<span class="pl-k">*</span></pre></div>
+
+<p>Of you can split a large file into many smaller files with a set maximum number
+of sequences per file</p>
+
+<div class="highlight highlight-source-shell"><pre>smof split -qn 500 -p zzz aa.faa
+grep -c <span class="pl-s"><span class="pl-pds">'</span>&gt;<span class="pl-pds">'</span></span> aa.faa zzz<span class="pl-k">*</span>
+rm zzz<span class="pl-k">*</span></pre></div>
+
 <h2>
 <a id="smof-uniq" class="anchor" href="#smof-uniq" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>smof uniq</code>
 </h2>
 
-<p>This is currently a pretty useless command.</p>
+<p>This command corresponds roughly to GNU uniq, but entries are considered
+identical only if both header and sequence are exactly the same. As currently
+implemented, I don't find much use for this command.</p>
 
 <h2>
 <a id="smof-wc" class="anchor" href="#smof-wc" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>smof wc</code>
 </h2>
 
-<p>Outputs the number of characters and entries in the fasta file.</p>
+<p>Outputs the number of characters and entries in the fasta file. Generally <code>smof
+stat</code> is better.</p>
+
+<h2>
+<a id="smof-grep" class="anchor" href="#smof-grep" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>smof grep</code>
+</h2>
+
+<p>Whereas GNU grep searches lines for matches, <code>smof grep</code> searches either the
+FASTA headers or the FASTA sequence.</p>
+
+<p>Extract the entries by matches to the header (default)</p>
+
+<div class="highlight highlight-source-shell"><pre>smof grep H312_03353 aa.faa</pre></div>
+
+<p>Extract entries by matches to a sequence </p>
+
+<div class="highlight highlight-source-shell"><pre>smof grep --match-sequence SKSQ aa.faa
+<span class="pl-c"># or equivalently</span>
+smof grep -q SKSQ aa.faa</pre></div>
+
+<p>You can include flanking regions in the match</p>
+
+<div class="highlight highlight-source-shell"><pre><span class="pl-c"># match 3 residues upstream</span>
+smof grep -qA3 <span class="pl-s"><span class="pl-pds">'</span>SKSQ<span class="pl-pds">'</span></span> aa.faa
+<span class="pl-c"># match 3 residues downstream </span>
+smof grep -qB3 <span class="pl-s"><span class="pl-pds">'</span>SKSQ<span class="pl-pds">'</span></span> aa.faa
+<span class="pl-c"># match 3 residues up- and downstream </span>
+smof grep -qC3 <span class="pl-s"><span class="pl-pds">'</span>SKSQ<span class="pl-pds">'</span></span> aa.faa</pre></div>
+
+<p>Inclusion of flanking regions is particularly useful in tandem with the -o
+option, which extracts only the matching sequence</p>
+
+<div class="highlight highlight-source-shell"><pre>smof grep -qoA3 <span class="pl-s"><span class="pl-pds">'</span>SKSQ<span class="pl-pds">'</span></span> aa.faa</pre></div>
+
+<p>Write the output in gff format</p>
+
+<div class="highlight highlight-source-shell"><pre>smof grep -q --gff SKSQ aa.faa</pre></div>
+
+<p>You can count the number of sequences with a match</p>
+
+<div class="highlight highlight-source-shell"><pre>smof grep -qc SKS aa.faa</pre></div>
+
+<p>Or the total number of matches</p>
+
+<div class="highlight highlight-source-shell"><pre>smof grep -qm SKSQ aa.faa</pre></div>
+
+<p>Or both</p>
+
+<div class="highlight highlight-source-shell"><pre>smof grep -qmc SKS aa.faa</pre></div>
+
+<p>Just like in GNU grep, you can invert a search. This search finds all genes
+that are not annotated as being hypothetical genes.</p>
+
+<div class="highlight highlight-source-shell"><pre>smof grep -v hypothetical aa.faa</pre></div>
+
+<p>By default <code>smof grep</code> is case insensitive (unlike GNU grep), but it can be
+made case sensitive</p>
+
+<div class="highlight highlight-source-shell"><pre>smof grep -I CoA aa.faa</pre></div>
+
+<p>You can search using patterns in a file</p>
+
+<div class="highlight highlight-source-shell"><pre>smof grep -f id-sample.txt aa.faa</pre></div>
+
+<p>This, however, can be a little slow, since it searchs each pattern in the file
+against the entire header. A much faster approach is to extract a search
+pattern from the headers (or sequence) and then lookup the header pattern in
+the set of search patterns.  <code>bash smof grep -f id-sample.txt -w '\| (\S+)
+\|' aa.faa</code></p>
+
+<p>Count occurrences (on both strands) of a DNA pattern using IUPAC extended
+nucleotide alphabet.</p>
+
+<div class="highlight highlight-source-shell"><pre>smof grep -qmbG YYNCTATAWAWASM aa.supercontigs.fna</pre></div>
+
+<p>You can search using a sequence query</p>
+
+<div class="highlight highlight-source-shell"><pre><span class="pl-c"># select 5 random sequences</span>
+smof sample -n 5 aa.faa <span class="pl-k">|</span> smof subseq -b 5 35 <span class="pl-k">&gt;</span> rand.faa
+smof grep -q --fastain rand.faa aa.faa</pre></div>
+
+<p>Or you can search for identical sequences shared between two fasta files</p>
+
+<div class="highlight highlight-source-shell"><pre>smof sample -n 5 aa.faa <span class="pl-k">&gt;</span> rand.faa
+smof grep -q --fastain rand.faa aa.faa </pre></div>
+
+<p>Find non-overlapping open reading frames of length greater than 100 codons.
+This is meant as an example of regex searching. This will NOT give you a great
+answer. smof does not consider frames (nor will it ever). It will not find the
+set of longest possible ORFs. If you want to identify ORFs, you should use a
+specialized program. That said:</p>
+
+<div class="highlight highlight-source-shell"><pre>smof grep -qPb --gff <span class="pl-s"><span class="pl-pds">'</span>ATG(.{3}){99,}?(TAA|TGA|TAG)<span class="pl-pds">'</span></span> aa.supercontigs.fna</pre></div>
+
+<h2>
+<a id="smof-md5sum" class="anchor" href="#smof-md5sum" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>smof md5sum</code>
+</h2>
+
+<p>This tool is useful if you want a checksum for a FASTA file that is independent
+of format (e.g. column width or case).</p>
 
 <h1>
 <a id="string-manipulation-commands" class="anchor" href="#string-manipulation-commands" aria-hidden="true"><span class="octicon octicon-link"></span></a>String manipulation commands</h1>
@@ -202,14 +296,10 @@ arguments, it reads the entire file into memory and outputs a random one.</p>
 <a id="smof-subseq" class="anchor" href="#smof-subseq" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>smof subseq</code>
 </h2>
 
-<p>From sequences with headers matching 'chr3', extract a subsequence from 357 to 668.</p>
-
-<div class="highlight highlight-source-shell"><pre>cat myfile.fna <span class="pl-k">|</span> smof grep chr3 <span class="pl-k">|</span> smof subseq -b 357 668 
-  <span class="pl-k">&gt;</span>chr3
-  atggtcctttctcttgtttcttctctgtgttgttgagattagtttgtttaggtttgatagcgttgattttggcctgcgtt
-  tggtgactcatatggtttgattggagtttgtttctgggttttatggttttggttgaagcgacatttttttgtggaatatg
-  gtttttgcaaaatattttgttccggatgagtaatatctacggtgctgctgtgagaattatgctattgttttgcaggtcct
-  gttcttaatctttcatcgcttttgtgcttattgtctccttgtcgtttatgttgagtggtgtttgggctttag</pre></div>
+<div class="highlight highlight-source-shell"><pre><span class="pl-c"># extract a subsequence</span>
+smof grep H312_00003T0 aa.faa <span class="pl-k">|</span> smof subseq -b 10 20
+<span class="pl-c"># color the subsequences instead</span>
+smof grep H312_00003T0 aa.faa <span class="pl-k">|</span> smof subseq -b 10 20 -c red</pre></div>
 
 <p>If the start is higher than the end, and the sequence appears to be a DNA
 sequence, then smof will take the reverse complement.</p>
@@ -238,15 +328,18 @@ makes uniform, 80-character columns.</p>
 
 <p>If you want to only keep sequences that are longer than 100 letters</p>
 
-<div class="highlight highlight-source-shell"><pre>smof filter -l 100 myfile.fa</pre></div>
+<div class="highlight highlight-source-shell"><pre>smof clean -x aa.faa <span class="pl-k">|</span> smof filter -l 100</pre></div>
+
+<p>Note that I call clean before filtering to remove the stop character, which
+should not be included when calculating length.</p>
 
 <p>Or shorter than 100 letters</p>
 
-<div class="highlight highlight-source-shell"><pre>smof filter -s 100 myfile.fa</pre></div>
+<div class="highlight highlight-source-shell"><pre>smof clean -x aa.faa <span class="pl-k">|</span> smof filter -s 100 aa.faa</pre></div>
 
 <p>Or that have greater than 60% AFILMVW content (hydrophobic amino acids)</p>
 
-<div class="highlight highlight-source-shell"><pre>smof filter -c <span class="pl-s"><span class="pl-pds">'</span>AFILMVW &gt; .6<span class="pl-pds">'</span></span> myfile.fa</pre></div>
+<div class="highlight highlight-source-shell"><pre>smof clean -x aa.faa <span class="pl-k">|</span> smof filter -c <span class="pl-s"><span class="pl-pds">'</span>AFILMVW &gt; .5<span class="pl-pds">'</span></span> aa.faa</pre></div>
 
 <h2>
 <a id="smof-sniff" class="anchor" href="#smof-sniff" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>smof sniff</code>
@@ -262,12 +355,12 @@ diagnosing problems. For details, run <code>smof sniff -h</code>.</p>
 <p>The default operation outputs number of sequences and summary statistics
 concerning the sequence lengths.</p>
 
-<div class="highlight highlight-source-shell"><pre>smof stat arabidopsis.faa
-   nseq:      35386
-   nchars:    14518241
-   5sum:      17 207 350 520 5394
-   mean(sd):  410 (305)
-   N50:       512</pre></div>
+<div class="highlight highlight-source-shell"><pre>smof stat aa.supercontigs.fna
+ nseq:      431
+ nchars:    12163397
+ 5sum:      445 3301 9555 30563 746881
+ mean(sd):  28221 (58445)
+ N50:       71704</pre></div>
 
 <p>'5sum' refers to the five number summary of the sequence lengths (minimum, 25%
 quantile, median, 75% quantile, and maximum).</p>
@@ -276,12 +369,88 @@ quantile, median, 75% quantile, and maximum).</p>
 default outputs the sequence names (the first word of the header) and the
 sequence length, e.g.</p>
 
-<div class="highlight highlight-source-shell"><pre>smof stat -q arabidopsis.faa <span class="pl-k">|</span> head -3
-   ATCG00500.1   489
-   ATCG00510.1   38
-   ATCG00280.1   474</pre></div>
+<div class="highlight highlight-source-shell"><pre>smof stat -q aa.supercontigs.fna <span class="pl-k">|</span> head</pre></div>
 
 <p>There are many other options. Run <code>smof stat -h</code> for descriptions.</p>
+
+<h1>
+<a id="case-study-1-exploration-and-motif-extraction" class="anchor" href="#case-study-1-exploration-and-motif-extraction" aria-hidden="true"><span class="octicon octicon-link"></span></a>Case study 1: exploration and motif extraction</h1>
+
+<p>Alice is interested in the chloroplast <em>maturase</em> gene. Bob gives her a sample
+dataset which includes 10 fasta files of proteins encoded by the chloroplast
+genomes of 10 different plant species. These files are available in the
+<code>sample-data/case-study-1</code> directory.</p>
+
+<p>You can find this dataset in the folder <em>doc/test-data/chloroplast-proteins</em>.</p>
+
+<p>Her first step is to explore the data. She first counts the sequences in each
+file with a simple grep command.</p>
+
+<pre><code>grep -c '&gt;' *faa
+</code></pre>
+
+<p>Next she tests the sequences with <code>smof sniff</code></p>
+
+<pre><code>smof sniff *faa
+</code></pre>
+
+<p>Producing the following output:</p>
+
+<pre><code>578 uniq sequences (757 total)
+All prot
+All uppercase
+Protein Features:
+  initial-Met:         755        99.7358%
+  terminal-stop:       0          0.0000%
+  internal-stop:       0          0.0000%
+  selenocysteine:      0          0.0000%
+Universal Features:
+  unknown:             8          1.0568%
+  ambiguous:           0          0.0000%
+  gapped:              0          0.0000%
+</code></pre>
+
+<p>Everything looks pretty good. But two of the sequences don't start with a
+methionine. Alice wants to find them. She does this using <code>smof grep</code> and a
+Perl regular expressions.</p>
+
+<pre><code>smof grep -qP '^[^M]' *faa
+</code></pre>
+
+<p>She finds these genes are both from <em>Solanum lycopersicum</em> and are described in
+the fasta headers as being <em>partial</em>.</p>
+
+<p>Now Alice wants to find the <em>maturase</em> genes by pulling out every entry with
+'maturase' in the fasta header.</p>
+
+<pre><code>smof grep maturase *faa
+smof grep maturase *faa &gt; maturase.faa
+</code></pre>
+
+<p>For a close look at the distribution of sequence lengths, Alice calls <code>smof
+stat</code></p>
+
+<pre><code>smof stat maturase.faa
+</code></pre>
+
+<p>Alice happens to be interested in the sequence WTQPQR from <em>Panicum virgatum</em>
+and would like to know what the homologous regions are in the other species.</p>
+
+<p>So Alice aligns the maturase genes with
+<a href="MUSCLE">http://nar.oxfordjournals.org/content/32/5/1792.short</a> and searches
+for the motif using the GFF output option.</p>
+
+<pre><code>muscle -quiet &lt; maturase.faa | tee maturase.aln | smof grep -q --gff WTQPQR
+</code></pre>
+
+<p>This is outputs the location of the match in standard GFF format, i.e. the
+match is at position 329 to 334. Homologs to this sequence will be at the same
+positions in the aligned fasta file output by MUSCLE.</p>
+
+<pre><code>smof subseq -b 329 334 maturase.aln
+</code></pre>
+
+<p>HMMER could then be used to analyze the by-site conservation of the sextuplet.</p>
         </article>
       </div>
     </div>
